@@ -10,6 +10,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\TglTest.Client\TglTest.Client.csproj" />
+		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
 	</ItemGroup>
 

@@ -2,6 +2,8 @@
 @rendermode InteractiveServer
 
 @inject DepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+
 
 <PageTitle>Departments</PageTitle>
 
@@ -38,7 +40,8 @@ else
                 <tbody>
                     @foreach (var department in _departments)
                     {
-                        <tr>
+                        <tr @onclick="() => NavigateToDepartment(department.Id)"
+                        >
                             <td>@department.Name</td>
                             <td>@department.Description</td>
                             <td>@department.Employees.Count</td>
@@ -60,4 +63,10 @@ else
 
         await base.OnInitializedAsync();
     }
+    
+    private void NavigateToDepartment(int departmentId)
+    {
+        NavigationManager.NavigateTo($"/departments/{departmentId}");
+    }
+
 }

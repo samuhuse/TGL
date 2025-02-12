@@ -1,3 +1,6 @@
+using Blazored.LocalStorage;
+using FluentValidation;
+using TglTest.Client.Models;
 using TglTest.Client.Services;
 using TglTest.Components;
 
@@ -10,9 +13,14 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<PostService>();
-builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddSingleton<DepartmentService>();
+
+builder.Services.AddScoped<IValidator<Department>, DepartmentValidator>();
+builder.Services.AddScoped<IValidator<Employee>, EmployeeValidator>();
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 

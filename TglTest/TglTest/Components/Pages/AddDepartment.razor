@@ -1,4 +1,5 @@
 ﻿@using Blazored.FluentValidation
+@using FluentValidation
 
 @page "/departments/add"
 @rendermode InteractiveServer
@@ -32,7 +33,8 @@
         </div>
 
         <div class="mb-3 col-auto">
-            <button type="button" class="btn btn-primary">Add Employee</button>
+            <button type="button" class="btn btn-primary" @onclick="AddEmployee"
+            >Add Employee</button>
             <ValidationMessage For="@(() => _department.Employees)" />
         </div>
     </div>
@@ -142,6 +144,20 @@
         // Redirect to the departments page and show a nice success message!
         NavigationManager.NavigateTo("/departments?done=true");
     }
+    
+    private void AddEmployee()
+    {
+        // Add a new Employee to the Employees list
+        _department.Employees.Add(new Employee
+        {
+            Name = string.Empty, // Default values for a new employee
+            Email = string.Empty,
+            Phone = string.Empty,
+            Address = string.Empty,
+            Position = null
+        });
+    }
+
 
 
 
@@ -157,4 +173,6 @@
             return isValid ? "form-control" : "form-control is-invalid";
         }
     }
+    
+
 }
