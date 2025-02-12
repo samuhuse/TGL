@@ -18,7 +18,7 @@
 }
 else
 {
-    <table class="table">
+    <table class="table post-table">
         <thead>
             <tr>
                 <th>Title</th>
@@ -34,7 +34,11 @@ else
                     <td>@post.Title</td>
                     <td>@post.Body</td>
                     <td>@post.UserId</td>
-                    <td>@string.Join(", ", post.Tags)</td>
+                    <td>
+                        @foreach (var tag in post.Tags) {
+                            <span class="tag">@tag</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
