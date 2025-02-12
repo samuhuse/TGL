@@ -7,12 +7,14 @@ public class PostService(HttpClient httpClient)
 {
     private readonly HttpClient _httpClient = httpClient;
 
-    public async Task<List<Post>> GetPostsAsync()
+    public async IAsyncEnumerable<Post> GetPostsAsync()
     {
         var response = await _httpClient.GetFromJsonAsync<ApiPostResponse>($"https://dummyjson.com/posts") ?? throw new Exception("Failed to fetch products");
 
-        // Increase the number of posts to simulate a bigger list of posts
-        return [.. response.Posts.SelectMany(x => response.Posts.SelectMany(x => response.Posts))];
+        foreach (var post in response.Posts.SelectMany(_ => response.Posts.SelectMany(x => response.Posts)))
+        {
+            yield return post;
+        }
     }
 
     public async Task<Post> GetPostAsync(int id)

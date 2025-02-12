@@ -46,11 +46,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(500);
+        // await Task.Delay(500);
+        _posts = new();
 
-        _posts = await PostService.GetPostsAsync();
-        // more than 20k posts expected... it takes to much to render.
-
+        await foreach (var post in PostService.GetPostsAsync())
+        {
+            _posts.Add(post);
+            StateHasChanged();
+        }
+        
         await base.OnInitializedAsync();
     }
 }
