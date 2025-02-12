@@ -1,0 +1,65 @@
+﻿@page "/departments/DepartmentId"
+
+@inject DepartmentService DepartmentService
+
+<PageTitle>Department Details</PageTitle>
+
+@if (_department is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>@_department.Name</h1>
+    <h5>@_department.Employees.Count employees</h5>
+    <hr />
+    <p>@_department.Description</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Position</th>
+                <th>Salary</th>
+                <th>HireDate</th>
+                <th>DepartmentId</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in _department.Employees)
+            {
+                <tr>
+                    <td>@employee.Id</td>
+                    <td>@employee.Name</td>
+                    <td>@employee.Email</td>
+                    <td>@employee.Phone</td>
+                    <td>@employee.Address</td>
+                    <td>@employee.Position</td>
+                    <td>@employee.Salary</td>
+                    <td>@employee.HireDate</td>
+                    <td>@employee.DepartmentId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    public int DepartmentId { get; set; }
+
+    private Department? _department;
+
+    override protected void OnInitialized()
+    {
+        _department = DepartmentService.GetDepartment(DepartmentId);
+
+        base.OnInitialized();
+    }
+}

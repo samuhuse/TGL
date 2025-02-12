@@ -1,0 +1,160 @@
+﻿@using Blazored.FluentValidation
+
+@page "/departments/add"
+@rendermode InteractiveServer
+
+@inject DepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Add department</PageTitle>
+
+<SectionContent SectionName="AppBar">
+    <h3>Add department</h3>
+</SectionContent>
+
+<EditForm EditContext="_departmentEditContext" OnValidSubmit="@HandleValidSubmit">
+    <FluentValidationValidator />
+    <div class="row g-3">
+        <div class="mb-3 col-4">
+            <label for="Name" class="form-label">Name</label>
+            <InputText id="Name" class="form-control" @bind-Value="_department.Name" />
+            <div class="invalid-feedback">
+                <ValidationMessage For="@(() => _department.Name)" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-12">
+            <label for="Description" class="form-label">Description</label>
+            <InputTextArea id="Description" class="form-control" @bind-Value="_department.Description" />
+            <div class="invalid-feedback">
+                <ValidationMessage For="@(() => _department.Description)" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-auto">
+            <button type="button" class="btn btn-primary">Add Employee</button>
+            <ValidationMessage For="@(() => _department.Employees)" />
+        </div>
+    </div>
+
+    @foreach (var employee in _department.Employees)
+    {
+        <div class="row justify-content-between border-top py-3">
+            <div class="col-auto">
+                <h4>Employee @(_department.Employees.IndexOf(employee) + 1)</h4>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger">Remove</button>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="mb-3 col-4">
+                <label for="Name" class="form-label">Name</label>
+                <InputText id="Name" class="form-control" @bind-Value="employee.Name" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Name)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-4">
+                <label for="Email" class="form-label">Email</label>
+                <InputText id="Email" class="form-control" @bind-Value="employee.Email" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Email)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-4">
+                <label for="Phone" class="form-label">Phone</label>
+                <InputText id="Phone" class="form-control" @bind-Value="employee.Phone" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Phone)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-8">
+                <label for="Address" class="form-label">Address</label>
+                <InputText id="Address" class="form-control" @bind-Value="employee.Address" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Address)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-4">
+                <label for="Position" class="form-label">Position</label>
+                <InputSelect id="Position" class="form-select" @bind-Value="employee.Position">
+                    <option selected disabled value="null"></option>
+                    <option value="Manager">Manager</option>
+                    <option value="Developer">Developer</option>
+                    <option value="Designer">Designer</option>
+                    <option value="QA">QA</option>
+                </InputSelect>
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Position)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-4">
+                <label for="Salary" class="form-label">Salary</label>
+                <InputNumber id="Salary" class="form-control" @bind-Value="employee.Salary" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.Salary)" />
+                </div>
+            </div>
+
+            <div class="mb-3 col-4">
+                <label for="HireDate" class="form-label">HireDate</label>
+                <InputDate id="HireDate" class="form-control" @bind-Value="employee.HireDate" />
+                <div class="invalid-feedback">
+                    <ValidationMessage For="@(() => employee.HireDate)" />
+                </div>
+            </div>
+        </div>
+
+    }
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</EditForm>
+
+
+
+@code {
+    public Department _department = new();
+    private EditContext? _departmentEditContext;
+
+    protected override void OnInitialized()
+    {
+        _department ??= new();
+        _departmentEditContext = new EditContext(_department);
+
+        // Set the field css class provider to allow bootstrap styling
+        _departmentEditContext.SetFieldCssClassProvider(new BootstrapFieldCssClassProvider());
+
+        base.OnInitialized();
+    }
+
+    private void HandleValidSubmit()
+    {
+        DepartmentService.AddDepartment(_department);
+
+        // Redirect to the departments page and show a nice success message!
+        NavigationManager.NavigateTo("/departments?done=true");
+    }
+
+
+
+    /// <summary>
+    /// This class is used to provide the css class for the form fields. Allows bootstrap styling.
+    /// </summary>
+    private class BootstrapFieldCssClassProvider() : FieldCssClassProvider
+    {
+        public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
+        {
+            var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
+
+            return isValid ? "form-control" : "form-control is-invalid";
+        }
+    }
+}

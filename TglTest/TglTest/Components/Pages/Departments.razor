@@ -1,0 +1,63 @@
+﻿@page "/departments"
+@rendermode InteractiveServer
+
+@inject DepartmentService DepartmentService
+
+<PageTitle>Departments</PageTitle>
+
+<SectionContent SectionName="AppBar">
+    <h3>Departments</h3>
+</SectionContent>
+
+@if (_departments is null)
+{
+    <div class="row g-3 justify-content-center align-items-center">
+        <div class="col-auto spinner-border" role="status"></div>
+        <h3 class="col-auto">Loading...</h3>
+    </div>
+}
+else if (_departments.Count is 0)
+{
+    <p>No departments found.</p>
+}
+else
+{
+    <div class="row justify-content-end">
+        <div class="col-auto">
+            <a href="/departments/add" class="btn btn-primary">Add Department</a>
+        </div>
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Employees</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var department in _departments)
+                    {
+                        <tr>
+                            <td>@department.Name</td>
+                            <td>@department.Description</td>
+                            <td>@department.Employees.Count</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}
+
+@code {
+    private List<Department>? _departments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _departments = DepartmentService.GetDepartments();
+
+        await base.OnInitializedAsync();
+    }
+}

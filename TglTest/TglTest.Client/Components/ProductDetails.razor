@@ -1,0 +1,28 @@
+﻿@inject ProductService ProductService
+
+@if (_product is not null)
+{
+    <div class="row g-3">
+        <div class="col-12">
+            <img src="@_product.Thumbnail" alt="@_product.Title" class="img-fluid" />
+        </div>
+        <div class="col-12">
+            <p>@_product.Description</p>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    private Product? _product;
+
+    override protected async Task OnInitializedAsync()
+    {
+        _product = await ProductService.GetProductAsync(ProductId);
+
+        await base.OnInitializedAsync();
+    }
+}

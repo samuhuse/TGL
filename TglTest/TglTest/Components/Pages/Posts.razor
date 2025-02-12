@@ -1,0 +1,56 @@
+﻿@page "/posts"
+@attribute [StreamRendering]
+
+@inject PostService PostService
+
+<PageTitle>Posts</PageTitle>
+
+<SectionContent SectionName="AppBar">
+    <h3>Posts</h3>
+</SectionContent>
+
+@if (_posts is null)
+{
+    <div class="row g-3 justify-content-center align-items-center">
+        <div class="col-auto spinner-border" role="status"></div>
+        <h3 class="col-auto">Loading...</h3>
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Body</th>
+                <th>UserId</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _posts)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.Body</td>
+                    <td>@post.UserId</td>
+                    <td>@string.Join(", ", post.Tags)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Post>? _posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        _posts = await PostService.GetPostsAsync();
+        // more than 20k posts expected... it takes to much to render.
+
+        await base.OnInitializedAsync();
+    }
+}
