@@ -46,7 +46,7 @@
                 <h4>Employee @(_department.Employees.IndexOf(employee) + 1)</h4>
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-danger">Remove</button>
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveEmployee(employee)">Remove</button>
             </div>
         </div>
 
@@ -157,7 +157,10 @@
         });
     }
 
-
+    private void RemoveEmployee(Employee employee)
+    {
+        _department.Employees.Remove(employee);
+    }
 
 
     /// <summary>
