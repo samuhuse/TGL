@@ -1,6 +1,7 @@
 ﻿@page "/products"
 @inject ProductService ProductService
 
+
 @rendermode InteractiveServer
 
 <PageTitle>Products</PageTitle>
@@ -25,7 +26,9 @@ else
     <div class="product-grid">
         @foreach (var product in _products)
         {
-            <div class="product" data-bs-toggle="modal" data-bs-target="#productModal">
+            var modalId = $"productModal_{product.Id}";
+
+            <div class="product" data-bs-toggle="modal" data-bs-target="#@modalId">
                 <img src="@product.Thumbnail" alt="@product.Title" />
                 <div class="product-info">
                     <h3>@product.Title</h3>
@@ -34,15 +37,15 @@ else
                 </div>
             </div>
 
-            <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@modalId + Label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="productModalLabel">Modal title</h5>
+                            <h5 class="modal-title" id="@modalId + Label">Modal title</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <ProductDetails ProductId="product.Id" />
+                            <ProductDetails ProductId="@product.Id" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -59,7 +62,9 @@ else
 
             @for (var i = 1; i <= _totalPages; i++)
             {
-                <button type="button" class="@($"btn btn{(_currentPage == i ? "" : "-outline")}-primary")" @onclick="() => OnPageClick(i)">
+                var pageNumber = i;
+
+                <button type="button" class="@($"btn btn{(_currentPage == i ? "" : "-outline")}-primary")" @onclick="() => OnPageClick(pageNumber)">
                     @i
                 </button>
             }
@@ -92,50 +97,43 @@ else
         var apiResponse = await ProductService.GetProductsAsync(_pageSize, (_currentPage - 1) * _pageSize);
 
         _products = apiResponse.Products;
-        _totalPages = apiResponse.Total / _pageSize;
+        _totalPages = (int)Math.Ceiling((double)apiResponse.Total / _pageSize); 
 
         await base.OnInitializedAsync();
+
     }
 
     private async Task OnPageClick(int page)
     {
-        _products = null;
+        if (page < 1 || page > _totalPages) return;
 
         _currentPage = page;
 
         var apiResponse = await ProductService.GetProductsAsync(_pageSize, (_currentPage - 1) * _pageSize);
         _products = apiResponse.Products;
 
-        StateHasChanged();
     }
 
     private async Task OnGoBackClick()
     {
+        
         if (_currentPage > 1)
         {
-            _products = null;
-
-            _currentPage--;
-
-            var apiResponse = await ProductService.GetProductsAsync(_pageSize, (_currentPage - 1) * _pageSize);
-            _products = apiResponse.Products;
-
+            await OnPageClick(_currentPage - 1);
             StateHasChanged();
         }
+
+
     }
 
     private async Task OnGoForwardClick()
     {
+        
         if (_currentPage < _totalPages)
         {
-            _products = null;
-
-            _currentPage++;
-
-            var apiResponse = await ProductService.GetProductsAsync(_pageSize, (_currentPage - 1) * _pageSize);
-            _products = apiResponse.Products;
-
+            await OnPageClick(_currentPage + 1);
             StateHasChanged();
         }
+        
     }
 }
